@@ -57,7 +57,25 @@ The important fields of the shapefile are:
  - _data_mode_ This controls how data from the layer is used. By default, as each progressively higher layer is processed
   it simply replaces any overlapping values from lower layers.  Options can
   be combined with a comma. Current options are 
-   - `min()` only overwrite lower layers where the new layer has a value less than the lower layer.
-   - `max()` only overwrite lower layers where the new layer has a value greater than the lower layer.
+   - `min()` use the minimum of the value of this layer and the value from lower layers.
+   - `max()` use the maximum of the value of this layer and the value from lower layers.
    - `fill(l)` fill holes in the source dataset up to `l` units wide.
+ - _alpha_mode_ This controls how layers are blended. By default a layer, once processed according to data_mode, will
+   simply overwrite the values from lower layers.  _alpha_mode_ allows some blending, with these options:
+   - `valid()` - limit the layer to locations with valid data. If a high priority dataset has nan values in it, this
+     will avoid writing those nans into the final DEM.  If the raster dataset has any nans, it is safest to include this
+     as the first option.
+   - `feather(l)` - blend this layer _in_ from the boundary by a distance _l_.
+   - `feather_out(l)` - blend this layer _out_ from its boundary by a distance _l_.
+ - _priority_  This dictates the order in which layers are processed.  The lowest priority is processed first, so that
+   higher priority layers have the opportunity to overwrite the lower priority layers.
+ 
+The shapefile in this repository additionally contains these fields:
+
+ - _comment_  Exactly that.
+ - _start_date_,_end_date_ To eventually support representing changes over time.  Rendering would be for
+  a specific date, these fields will be used to omit certain layers that are not relevant for that
+  specific date.
+  
+
  
