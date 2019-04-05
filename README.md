@@ -77,5 +77,20 @@ The shapefile in this repository additionally contains these fields:
   a specific date, these fields will be used to omit certain layers that are not relevant for that
   specific date.
   
+## Example output
+<img src="docs/sample-marsh.png" width="600"> 
+Here 3 datasets are being merged:
 
+ 1. `dem_bay_delta_10m*.tif` This is the lowest priority, and references a collection of 4 10m DEMs assembled
+    by DWR.  The boundary polygon for this source is not visible.
+ 2. `Suisun_CMP_full_2m.tif` This is the next higher priority, and is used within the larger of the magenta
+    polygons (extending off the image to the north, south, and west).  It is blended with the 10m data over
+    a relatively small 4m length.
+ 3. `py:ConstantField(2.0)` This is applied in the magenta polygon in the center of the image and extending 
+    to the east.  It is intended to replace high marsh elevations (which are likely wrong due to vegetation
+    in the source LiDaR of the lower priority layers).  Here we only want to lower the existing data, and
+    want to avoid overwriting any small channels which are captured by the previous layers.  This is 
+    accomplished by using the `min()` data mode. A generous 15m feather is also included (that may actually be
+    too large, and leave some high spots near the channel in the south).
+    
  
