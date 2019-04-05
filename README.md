@@ -13,6 +13,8 @@ a small set of users since it relies on having copies of various
 source datasets.  Nonetheless, this repository serves to document
 the process and provide a starting point for future modifications.
 
+## Rendering
+
 An example of rendering tiles for a small part of Suisun Marsh:
 
 ```
@@ -39,4 +41,23 @@ Breaking that down:
   - `-r 2.0`: Set the render resolution. No reprojection is done, so this will be in the units of the projection 
     of the shapefile (which in turn is assumed to match the projection of any raster inputs).
     
+## Defining sources
+ 
+The shapefile defines what source datasets will be used and how to combine them.  It should be a polygon shapefile, in a square projection (i.e. UTM, rather than latitude/longitude).  The overall process is similar to working with layers
+in image editing software -- source datasets are stacked up, with "higher" layers taking precedence over "lower" layers.
+Note that "higher" and "lower" are in terms of _priority_, not elevation.
+
+The important fields of the shapefile are:
+
+ - _src_name_ By default this is interpreted as a filename for a raster dataset.  It can include wildcards (* or ?), 
+  in which case all matching files will be used.  Filenames will be searched for in the current directory and any 
+  paths specified with `-p` options.  If _src_name_ starts with `py:` then the rest of the field is interpreted
+  as python code.  Currently the only viable code to include is `ConstantField(-1.234)` which will create a 
+  constant-valued source dataset.
+ - _data_mode_ This controls how data from the layer is used. By default, as each progressively higher layer is processed
+  it simply replaces any overlapping values from lower layers.  Options can
+  be combined with a comma. Current options are 
+   - `min()` only overwrite lower layers where the new layer has a value less than the lower layer.
+   - `max()` only overwrite lower layers where the new layer has a value greater than the lower layer.
+   - `fill(l)` fill holes in the source dataset up to `l` units wide.
  
